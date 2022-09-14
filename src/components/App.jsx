@@ -3,17 +3,51 @@ import { Component } from 'react';
 import { nanoid } from 'nanoid'
 import { Phonebook } from './Phonebook/Phonebook';
 import { Contacts } from './Contacts/Contacts';
-import initialContacts from '../initialContacts.json'
+import { getContactFromLS, saveContactToLS } from 'LocalStorage/conatctsLS';
+
 
 
 export class App extends Component {
   state = {
-  contacts: [...initialContacts],
+  contacts: [],
   filter: '',
   name: '',
   number: ''
   }
+
   
+  componentDidMount() { 
+    if (getContactFromLS()) {
+      this.setState({contacts: getContactFromLS()})
+    }
+  }
+  
+  componentDidUpdate( _, prevState) {
+    const { contacts } = this.state
+    if (prevState.contacts !== contacts) {
+      saveContactToLS(contacts)
+    }
+  }
+
+  render() {
+    const { contacts, filter } = this.state
+    
+    return (
+      <>
+        <Phonebook title="Phonebook"
+          addContat={this.addNewContat}
+        />
+        {contacts.length > 0 && <Contacts title="Contacts"
+          contactsList={contacts}
+          filterChanger={this.filterChanger}
+          filter={filter}
+          deleter={this.deleteContact}
+        />}
+        <GlobalStyle />
+      </>
+    );
+  }
+
   addNewContat = ({ name, number }) => { 
     this.state.contacts.some( contact => contact.name === name)
     ? alert(`${name} is alredy in contarts`)
@@ -27,23 +61,4 @@ export class App extends Component {
   deleteContact = (id) => this.setState(prevState => (
     { contacts: [...prevState.contacts.filter(contact => contact.id !== id)] })
   )
-
-  render() {
-    const { contacts, filter } = this.state
-    
-    return (
-      <>
-        <Phonebook title="Phonebook"
-          addContat={this.addNewContat}
-        />
-        <Contacts title="Contacts"
-          contactsList={contacts}
-          filterChanger={this.filterChanger}
-          filter={filter}
-          deleter={this.deleteContact}
-        />
-        <GlobalStyle />
-      </>
-    );
-  }
 };

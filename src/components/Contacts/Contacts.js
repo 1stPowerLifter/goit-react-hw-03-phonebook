@@ -1,8 +1,9 @@
+import PropTypes from 'prop-types';
 import { Box } from 'components/Box';
 import { DeleteContact } from './Contacts.styled';
 
 
-export const Contacts = ({ title, contactsList, filterChanger, filter, deleter, theme}) => {
+export const Contacts = ({ title, contactsList, filterChanger, filter, deleter }) => {
 
     const renderContacts = () => {
         
@@ -36,4 +37,17 @@ export const Contacts = ({ title, contactsList, filterChanger, filter, deleter, 
             </Box>
         </Box>
     )
+}
+
+Contacts.propType = {
+    title: PropTypes.string.isRequired,
+    contactsList: PropTypes.arrayOf(
+        PropTypes.exact({
+            id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            number: PropTypes.string.isRequired
+        })),
+    filterChanger: PropTypes.func.isRequired,
+    filter: PropTypes.string.isRequired,
+    deleter: PropTypes.func.isRequired
 }
